@@ -19,7 +19,8 @@ def main():
     st.set_page_config(page_title="AIライティングツール", layout="wide")
     st.sidebar.title("AIライティングツール")
 
-    if not os.environ.get("GEMINI_API_KEY"):
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not api_key or api_key == "your_api_key_here":
         st.sidebar.error(
             "GEMINI_API_KEY が設定されていません。.env ファイルに設定してください。"
         )

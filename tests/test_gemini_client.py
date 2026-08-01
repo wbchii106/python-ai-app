@@ -49,3 +49,27 @@ def test_generate_from_image_returns_response_text(monkeypatch):
     result = gemini_client.generate_from_image(b"fake-bytes", "image/png", "説明して")
 
     assert result == "画像の説明文"
+
+
+def test_generate_text_raises_when_response_text_is_none(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "dummy-key")
+    fake_client = FakeClient(None)
+    monkeypatch.setattr(gemini_client.genai, "Client", lambda api_key: fake_client)
+
+    try:
+        gemini_client.generate_text("挨拶して")
+        assert False, "RuntimeError が送出されるべき"
+    except RuntimeError:
+        pass
+
+
+def test_generate_text_raises_when_response_text_is_empty_string(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "dummy-key")
+    fake_client = FakeClient("")
+    monkeypatch.setattr(gemini_client.genai, "Client", lambda api_key: fake_client)
+
+    try:
+        gemini_client.generate_text("挨拶して")
+        assert False, "RuntimeError が送出されるべき"
+    except RuntimeError:
+        pass

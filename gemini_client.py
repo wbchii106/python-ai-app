@@ -18,7 +18,12 @@ def _get_client() -> genai.Client:
 def generate_text(prompt: str) -> str:
     client = _get_client()
     response = client.models.generate_content(model=MODEL_NAME, contents=[prompt])
-    return response.text
+    text = response.text
+    if not text:
+        raise RuntimeError(
+            "応答にテキストが含まれていません（安全性フィルタまたはトークン上限の可能性があります）。"
+        )
+    return text
 
 
 def generate_from_image(image_bytes: bytes, mime_type: str, prompt: str) -> str:
@@ -30,4 +35,9 @@ def generate_from_image(image_bytes: bytes, mime_type: str, prompt: str) -> str:
             prompt,
         ],
     )
-    return response.text
+    text = response.text
+    if not text:
+        raise RuntimeError(
+            "応答にテキストが含まれていません（安全性フィルタまたはトークン上限の可能性があります）。"
+        )
+    return text
