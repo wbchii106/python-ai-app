@@ -1,6 +1,10 @@
+import logging
+
 import streamlit as st
 
 from gemini_client import generate_from_image
+
+logger = logging.getLogger(__name__)
 
 
 def build_prompt(memo: str) -> str:
@@ -28,8 +32,10 @@ def render():
                         uploaded_file.getvalue(), uploaded_file.type, build_prompt(memo)
                     )
                     st.session_state["sns_result"] = result
-                except Exception as e:
-                    st.error(f"生成に失敗しました: {e}")
+                except Exception:
+                    # 例外の詳細(APIエラー内容など)を画面に出さずログにのみ記録する
+                    logger.exception("SNS投稿文生成に失敗しました")
+                    st.error("生成に失敗しました。しばらくしてから再度お試しください。")
 
     if "sns_result" in st.session_state:
         st.code(st.session_state["sns_result"], language=None)
